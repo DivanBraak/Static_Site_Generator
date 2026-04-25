@@ -1,3 +1,4 @@
+#--------------------------HTML NODE DECLARATION--------------------------
 class HTMLNode():
     def __init__(self,tag=None,value=None,children=None,props=None):
         self.tag = tag
@@ -27,10 +28,10 @@ class HTMLNode():
         print_lines.append(f"PROPS: {self.props}")
         print_lines.append("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
         return "\n".join(print_lines)
-    
+#--------------------------LEAF NODE DECLARATION--------------------------    
 class LeafNode(HTMLNode):
     def __init__(self, tag, value, props=None):
-        super().__init__(tag, value, props)
+        super().__init__(tag, value, None, props)
     
     def to_html(self):
         if not self.value: 
@@ -49,3 +50,24 @@ class LeafNode(HTMLNode):
         print_lines.append(f"PROPS: {self.props}")
         print_lines.append("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
         return "\n".join(print_lines)
+    
+#-------------------------PARENT NODE DECLARATION-------------------------
+class ParentNode(HTMLNode):
+    def __init__(self, tag, children, props=None):
+        super().__init__(tag, None, children, props)
+    
+    def to_html(self):
+        if not self.tag:
+            raise ValueError("ERROR: Parentnode has no tag")
+        
+        if not self.children:
+            raise ValueError("ERROR: Parentnode has no children")
+        
+        output = f"<{self.tag}>"
+
+        for child in self.children:
+            output += f"{child.to_html()}"
+
+        output += f"</{self.tag}>"
+
+        return output
