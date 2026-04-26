@@ -1,8 +1,14 @@
 import unittest
 
 from textnode import TextNode, TextType
-from markdown_conversion import split_nodes_delimiter,extract_markdown_images,extract_markdown_links,split_nodes_image,split_nodes_link
-
+from markdown_conversion import (
+    split_nodes_delimiter,
+    extract_markdown_images,
+    extract_markdown_links,
+    split_nodes_image,
+    split_nodes_link,
+    text_to_textnodes
+)
 
 class TestSplitNodesDelimiter(unittest.TestCase):
     #Tests no delimiters
@@ -113,6 +119,63 @@ class test_image_and_link_splitting(unittest.TestCase):
             ],
             new_nodes
         )
+
+class test_text_to_textnode_converter(unittest.TestCase):
+    def test_normal_usage_all_types(self):
+        text_nodes = text_to_textnodes("This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)")
+
+        self.assertEqual(
+            text_nodes,
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("text", TextType.BOLD),
+                TextNode(" with an ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" word and a ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+                TextNode(" and an ", TextType.TEXT),
+                TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                TextNode(" and a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://boot.dev"),
+            ]
+        )
+
+    def test_no_markdown(self):
+        text_nodes = text_to_textnodes("This is text with no markdown at all")
+
+        self.assertEqual(text_nodes,[TextNode("This is text with no markdown at all",TextType.TEXT)])
+
+    def test_one_markdown(self):
+        text_nodes = text_to_textnodes("This is text with only one markdown which is a **bold** word")
+
+        self.assertEqual(
+            text_nodes,
+            [
+                TextNode("This is text with only one markdown which is a ",TextType.TEXT),
+                TextNode("bold",TextType.BOLD),
+                TextNode(" word",TextType.TEXT)
+            ]
+        )
+
+    def test_multiple_same_markdown(self):
+        text_nodes = text_to_textnodes("This is text with **bold** and **bold** markdown")
+
+        self.assertEqual(
+            text_nodes,
+            [
+                TextNode("This is text with ",TextType.TEXT),
+                TextNode("bold",TextType.BOLD),
+                TextNode(" and ",TextType.TEXT),
+                TextNode("bold",TextType.BOLD),
+                TextNode(" markdown",TextType.TEXT)
+            ]
+        )
+
+    def test_no_input(self):
+        text_nodes = text_to_textnodes("")
+
+        self.assertEqual(text_nodes,[])
+
 
 if __name__ == "__main__":
     unittest.main()
