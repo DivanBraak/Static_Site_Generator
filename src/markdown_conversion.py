@@ -1,3 +1,8 @@
+"""
+We take raw text and turn it into TextNodes
+We use textnodes in text_node.py and convert then to leaf nodes there.
+"""
+
 import re
 from textnode import TextNode,TextType
 
@@ -97,6 +102,7 @@ def split_nodes_link(old_nodes):
     #print(f"DEBUG LINK SPLIT:\n{new_nodes}\n ")
     return new_nodes
 
+#----------Turns raw text into a bunch of text nodes----------
 def text_to_textnodes(text):
     text_nodes = [TextNode(text,TextType.TEXT)]
     text_nodes = split_nodes_delimiter(text_nodes,"**",TextType.BOLD)

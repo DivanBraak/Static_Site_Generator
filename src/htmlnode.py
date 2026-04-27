@@ -1,3 +1,9 @@
+"""
+Defines HTMLNode, LeafNode and ParentNode. Letter 2 child classes of HTMLNode.
+LeafNode does not have children
+ParentNode does not have a value
+"""
+
 #--------------------------HTML NODE DECLARATION--------------------------
 class HTMLNode():
     def __init__(self,tag=None,value=None,children=None,props=None):
@@ -12,12 +18,10 @@ class HTMLNode():
     def props_to_html(self):
         if self.props is None:
             return ""
-        #output_list = []
         output = ""
         for prop in self.props:
             output += f' {prop}="{self.props[prop]}"'
-            #output_list.append(f"{prop}={self.props[prop]}")
-        return output #" ".join(output_list)
+        return output
     
     def __repr__(self):
         print_lines = []
@@ -28,6 +32,7 @@ class HTMLNode():
         print_lines.append(f"PROPS: {self.props}")
         print_lines.append("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
         return "\n".join(print_lines)
+    
 #--------------------------LEAF NODE DECLARATION--------------------------    
 class LeafNode(HTMLNode):
     def __init__(self, tag, value, props=None):

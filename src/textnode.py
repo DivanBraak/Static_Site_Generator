@@ -1,6 +1,12 @@
+"""
+This defines a TextNode, the most basic form of node, it is created in markdown_conversion.
+Use text_node_to_html_node to convert it to a lead_node with correct tags, values, and props.
+"""
+
 from enum import Enum
 from htmlnode import LeafNode
 
+#Define Enum TextType
 class TextType(Enum):
     TEXT = "text"
     BOLD = "bold"
@@ -9,7 +15,7 @@ class TextType(Enum):
     LINK = "link"
     IMAGE = "image"
 
-
+#Define textnode, most basic node, contains TEXT, TYPE and optional URL
 class TextNode():
     def __init__(self,text,text_type,url=None):
         self.text = text
@@ -28,7 +34,7 @@ class TextNode():
     def __repr__(self):
         return f"TextNode({self.text}, {self.text_type.value}, {self.url})"
 
-    
+#Takes a text node and turns it into a leaf node with a TAG, VALUE and potential PROPS like a url
 def text_node_to_html_node(text_node):
     
     match text_node.text_type:
