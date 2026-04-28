@@ -181,3 +181,11 @@ def code_format(block):
     block = block[4:]
     block = block[:-3]
     return block
+
+#---------------------EXTRACT HEADING---------------------
+def extract_title(markdown):
+    lines = markdown.split('\n')
+    for line in lines:
+        if line[0:2] == "# ":
+            return line[2:].strip()
+    raise Exception("ERROR: No heading found")

@@ -1,6 +1,6 @@
 import unittest
 
-from markdown_blocks import markdown_to_blocks,block_to_block_type,BlockType,markdown_to_html_nodes
+from markdown_blocks import markdown_to_blocks,block_to_block_type,BlockType,markdown_to_html_nodes,extract_title
 
 class test_blocks(unittest.TestCase):
     def test_normal_usage(self):
@@ -430,7 +430,50 @@ This is another paragraph with _italic_ text and `code` here
             html,
             '<div><ol><li>Ordered item one</li><li>Ordered item two with <b>bold</b></li><li>Ordered item three with <i>italic</i></li></ol></div>'
         )
+class test_title_extractor(unittest.TestCase):
+    def test_normal_usage(self):
+        md = """
+# This is the Title
 
+This is a paragraph
+"""
+        result = extract_title(md)
+        self.assertEqual(result,"This is the Title")
+
+    def test_more_hash_and_whitespace(self):
+        md = """
+# ## This is the Title       
+
+This is a paragraph
+"""
+        result = extract_title(md)
+        self.assertEqual(result,"## This is the Title")
+
+    def test_no_title(self):
+        md = """
+## This is not the Title
+
+This is a paragraph
+"""
+        self.assertRaises(Exception,extract_title,md)
+
+    def test_bad_formatting(self):
+        md = """
+# This is the Title
+This is a paragraph
+"""
+        result = extract_title(md)
+        self.assertEqual(result,"This is the Title")
+
+
+    def test_bad_formatting2(self):
+        md = """# Real Title
+
+## Subheading
+Some text
+"""
+        result = extract_title(md)
+        self.assertEqual(result,"Real Title")
 
 
 
