@@ -264,7 +264,7 @@ class test_block_to_block_type(unittest.TestCase):
         self.assertEqual(result, BlockType.PARAGRAPH)
 
 class test_markdown_to_html_block_nodes(unittest.TestCase):
-    def tecomplete_test(self):
+    def test_complete_test(self):
         md = md = """
 # Heading 1
 
@@ -296,16 +296,20 @@ it should _not_ parse **inline** markdown
 keep newlines intact
 ```
 """
+ 
         node = markdown_to_html_nodes(md)
         html = node.to_html()
-        self.assertEqual(
-            html,
-            """
+
+        expected = """
 <div><h1>Heading 1</h1><h2>Heading 2 with <b>bold</b></h2><h3>Heading 3 with <i>italic</i></h3><p>This is a normal paragraph with <b>bold</b>, <i>italic</i>, and <code>code</code> inline.</p><p>This is another paragraph that spans multiple lines and should collapse to spaces.</p><blockquote>This is a quote block that spans multiple lines and has <b>bold</b> text inside.</blockquote><ul><li>unordered item one</li><li>unordered item two with <i>italic</i></li><li>unordered item three</li></ul><ol><li>ordered item one</li><li>ordered item two with <code>code</code></li><li>ordered item three</li></ol><pre><code>this is a code block
 it should _not_ parse **inline** markdown
 keep newlines intact
 </code></pre></div>
-"""
+""".strip()
+
+        self.assertEqual(
+            html,
+            expected
         )
     def test_paragraphs(self):
         md = """
@@ -359,6 +363,75 @@ This is another paragraph with _italic_ text and `code` here
             html,
             "<div><h2>Heading 2 with <b>bold</b></h2></div>",
         )
+
+    def test_empty_markdown(self):
+        md = """
+"""
+        self.assertRaises(ValueError,markdown_to_html_nodes,md)
+
+    def test_all_headings(self):
+        md = """
+# Heading 1
+
+## Heading 2 with **bold** and _italic_
+
+### Heading 3
+
+#### Heading 4
+
+##### Heading 5
+
+###### Heading 6
+"""
+
+        node = markdown_to_html_nodes(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><h1>Heading 1</h1><h2>Heading 2 with <b>bold</b> and <i>italic</i></h2><h3>Heading 3</h3><h4>Heading 4</h4><h5>Heading 5</h5><h6>Heading 6</h6></div>",
+        )
+
+    def test_wrong_heading(self):
+        md = """
+####### Not a heading, just a paragraph with seven hashes
+"""
+
+        node = markdown_to_html_nodes(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><p>####### Not a heading, just a paragraph with seven hashes</p></div>",
+        )
+
+    def test_unordered_list(self):
+        md = """
+- Unordered item one
+- Unordered item two with `code`
+- Unordered item three with [a link](https://example.com)
+"""
+
+        node = markdown_to_html_nodes(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            '<div><ul><li>Unordered item one</li><li>Unordered item two with <code>code</code></li><li>Unordered item three with <a href="https://example.com">a link</a></li></ul></div>'
+        )
+
+    def test_unordered_list(self):
+        md = """
+1. Ordered item one
+2. Ordered item two with **bold**
+3. Ordered item three with _italic_
+"""
+
+        node = markdown_to_html_nodes(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            '<div><ol><li>Ordered item one</li><li>Ordered item two with <b>bold</b></li><li>Ordered item three with <i>italic</i></li></ol></div>'
+        )
+
+
 
 
 if __name__ == "__main__":

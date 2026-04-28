@@ -68,6 +68,9 @@ def block_to_block_type(block):
 
 #TURNING BLOCKS INTO HTML NODES
 def markdown_to_html_nodes(markdown):
+    if not markdown.strip():
+        raise ValueError("ERROR: Markdown is empty")
+
     #Split markdown into blocks
     blocks = markdown_to_blocks(markdown)
     block_nodes = []
